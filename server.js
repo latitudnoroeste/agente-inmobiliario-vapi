@@ -15,8 +15,20 @@ app.post('/webhook', async (req, res) => {
   const data = req.body;
   console.log('Datos recibidos de Vapi:', JSON.stringify(data, null, 2));
 
+  const structuredData = data?.message?.analysis?.structuredData || {};
+  const { appointment_date, appointment_time, appointment_slot } = structuredData;
+
+  const payload = {
+    ...data,
+    appointment_date: appointment_date ?? null,
+    appointment_time: appointment_time ?? null,
+    appointment_slot: appointment_slot ?? null,
+  };
+
+  console.log('Campos de cita extraídos:', { appointment_date, appointment_time, appointment_slot });
+
   try {
-    const response = await axios.post(MAKE_WEBHOOK_URL, data, {
+    const response = await axios.post(MAKE_WEBHOOK_URL, payload, {
       headers: { 'Content-Type': 'application/json' },
     });
     console.log('Respuesta de Make:', response.status);
