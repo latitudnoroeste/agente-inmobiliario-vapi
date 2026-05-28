@@ -107,10 +107,12 @@ app.post('/webhook', async (req, res) => {
 });
 
 app.post('/check-availability', async (req, res) => {
-  const { fecha_cita, hora_cita } = req.body;
+  // Acepta tanto fecha/hora (nombre que usa Vapi) como fecha_cita/hora_cita
+  const fecha_cita = req.body.fecha_cita || req.body.fecha;
+  const hora_cita  = req.body.hora_cita  || req.body.hora;
 
   if (!fecha_cita || !hora_cita) {
-    return res.status(400).json({ error: 'Se requieren fecha_cita y hora_cita' });
+    return res.status(400).json({ error: 'Se requieren fecha_cita y hora_cita (o fecha y hora)' });
   }
 
   const dateMatch = fecha_cita.match(/^(\d{2})-(\d{2})-(\d{4})$/);
